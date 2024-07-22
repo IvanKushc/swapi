@@ -5,11 +5,9 @@ from pathlib import Path
 
 class APIRequester():
 
-    base_url = 'https://swapi.dev/'
-    page = {'page': 1}
-
-    def __init__(self, url=base_url):
+    def __init__(self, url=''):
         self.base_url = url
+        self.page = {'page': 1}
 
     def get(self, url=''):
         send_url = self.base_url + url
@@ -24,27 +22,21 @@ class APIRequester():
 
 class SWRequester(APIRequester):
 
-    base_url = 'https://swapi.dev/api'
-
-    def __init__(self, url=base_url):
+    def __init__(self, url=''):
         super().__init__(url)
 
     def get_sw_categories(self, url='/'):
         try:
-            response = requests.get(self.base_url + url, params=self.page)
-            response.raise_for_status()
+            response = self.get(url)
             response = response.json()
             return response.keys()
         except requests.exceptions.RequestException:
             print('Ошибка при запросе категорий')
             return False
 
-    def get_sw_info(self, sw_type, *args):
-        url = f'{self.base_url}/{sw_type}/'
-        for i in args:
-            url += f'{i}/'
-        response = requests.get(url, params=self.page)
-        response.raise_for_status()
+    def get_sw_info(self, sw_type):
+        url = f'/{sw_type}/'
+        response = self.get(url)
         return response.text
 
 
